@@ -1,21 +1,16 @@
 import { useParams } from "react-router-dom";
-import { useState, DragEvent, useEffect } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-
 import DOMPurify from "dompurify";
-import Languages from "../../constants/Languages";
-import Themes from "../../constants/Themes";
-import ProblemP from "./ProblemP";
-
-import { useSocket } from "../../hooks/useSocket";
-import { ProblemData } from "../../types/problem.types";
 import toast from "react-hot-toast";
 
-type languageSupport = { languageName: string; value: string };
-type themeStyle = { themeName: string; value: string };
+import Languages from "../../constants/Languages";
+import Themes from "../../constants/Themes";
+import { useSocket } from "../../hooks/useSocket";
+import { ProblemData } from "../../types/problem.types";
+import Editor from "@monaco-editor/react";
 
 const USER_ID = "GOURAV_1";
 const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
@@ -30,14 +25,12 @@ function ProblemDescription() {
   const [isDragging, setIsDragging] = useState(false);
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
-  const [theme, setTheme] = useState("monokai");
+  const [theme, setTheme] = useState("vs-dark"); // Monaco themes: "vs-dark", "vs", "hc-black"
 
   useSocket(socketUrl, USER_ID);
 
-  // Fetch problem by ID
+  // Fetch problem
   useEffect(() => {
-    toast.success("dfssa");
-
     if (!id) return;
 
     const fetchProblem = async () => {
@@ -55,7 +48,7 @@ function ProblemDescription() {
     fetchProblem();
   }, [id]);
 
-  // Fill code editor based on selected language
+  // Fill code editor based on language
   useEffect(() => {
     if (!problem || !problem.codeStubs) return;
 
@@ -77,20 +70,21 @@ function ProblemDescription() {
         userId: USER_ID,
         problemId: problem._id,
       });
-      console.log(response);
+      toast.success("Submission sent!");
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Submission failed!");
     }
   };
 
   // Drag functions
-  const startDragging = (e: DragEvent<HTMLDivElement>) => {
+  const startDragging = (e: React.DragEvent<HTMLDivElement>) => {
     setIsDragging(true);
     e.preventDefault();
   };
   const stopDragging = () => isDragging && setIsDragging(false);
-  const onDrag = (e: DragEvent<HTMLDivElement>) => {
+  const onDrag = (e: React.DragEvent<HTMLDivElement>) => {
     if (!isDragging) return;
     const newLeftWidth = (e.clientX / window.innerWidth) * 100;
     if (newLeftWidth > 10 && newLeftWidth < 90) setLeftWidth(newLeftWidth);
@@ -170,7 +164,7 @@ function ProblemDescription() {
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
-            {Languages.map((lang: languageSupport) => (
+            {Languages.map((lang: any) => (
               <option key={lang.value} value={lang.value}>
                 {lang.languageName}
               </option>
@@ -182,7 +176,7 @@ function ProblemDescription() {
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
           >
-            {Themes.map((th: themeStyle) => (
+            {Themes.map((th: any) => (
               <option key={th.value} value={th.value}>
                 {th.themeName}
               </option>
@@ -192,17 +186,22 @@ function ProblemDescription() {
 
         {/* Code editor */}
         <div className="flex flex-col editor-console grow-[1]">
-          <div className="editorContainer grow-[1]">
-            <ProblemP
-              language={language}
-              theme={theme}
-              code={code}
-              setCode={setCode}
-            />
-          </div>
+          <Editor
+            height="100%"
+            defaultLanguage={language}
+            language={language}
+            value={code}
+            onChange={(value) => setCode(value || "")}
+            theme={theme}
+            options={{
+              automaticLayout: true,
+              fontSize: 16,
+              minimap: { enabled: false },
+            }}
+          />
 
           {/* Test cases */}
-          <div className="collapse bg-base-200 rounded-none">
+          <div className="collapse bg-base-200 rounded-none mt-2">
             <input type="checkbox" className="peer" />
             <div className="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
               Console
