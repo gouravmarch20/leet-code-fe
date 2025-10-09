@@ -1,16 +1,16 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import DOMPurify from "dompurify";
 import toast from "react-hot-toast";
+import Editor from "@monaco-editor/react";
 
 import Languages from "../../constants/Languages";
 import Themes from "../../constants/Themes";
 import { useSocket } from "../../hooks/useSocket";
 import { ProblemData } from "../../types/problem.types";
-import Editor from "@monaco-editor/react";
 
 const USER_ID = "GOURAV_1";
 const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
@@ -20,19 +20,49 @@ function ProblemDescription() {
   const { id } = useParams<{ id: string }>();
   const [problem, setProblem] = useState<ProblemData | null>(null);
   const [activeTab, setActiveTab] = useState("statement");
-  const [testCaseTab, setTestCaseTab] = useState("input");
   const [leftWidth, setLeftWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
-  const [theme, setTheme] = useState("vs-dark"); // Monaco themes: "vs-dark", "vs", "hc-black"
+  const [theme, setTheme] = useState("vs-dark");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useSocket(socketUrl, USER_ID);
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [isLoadingSubs, setIsLoadingSubs] = useState(false);
+
+  const fetchSubmissions = async () => {
+    if (!problem?._id) return;
+    setIsLoadingSubs(true);
+    try {
+      const res = await axios.post(
+        `${submissionUrl}/api/v1/submissions/problem`,
+        {
+          userId: USER_ID,
+          problemId: problem._id,
+        }
+      );
+      if (res.data.success) {
+        setSubmissions(res.data.data);
+      } else {
+        setSubmissions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching submissions:", error);
+      toast.error("Failed to load submissions!");
+    } finally {
+      setIsLoadingSubs(false);
+    }
+  };
+
+  const { submissionData, setSubmissionData } = useSocket(
+    socketUrl,
+    USER_ID,
+    setIsSubmitting
+  );
 
   // Fetch problem
   useEffect(() => {
     if (!id) return;
-
     const fetchProblem = async () => {
       try {
         const res = await fetch(
@@ -44,34 +74,31 @@ function ProblemDescription() {
         console.error("Error fetching problem:", err);
       }
     };
-
     fetchProblem();
   }, [id]);
 
-  // Fill code editor based on language
+  // Fill editor with language-specific starter code
   useEffect(() => {
     if (!problem || !problem.codeStubs) return;
-
-    const selectedStub = problem.codeStubs.find(
-      (stub: any) => stub.language.toLowerCase() === language.toLowerCase()
+    const stub = problem.codeStubs.find(
+      (s: any) => s.language.toLowerCase() === language.toLowerCase()
     );
-
-    if (selectedStub) {
-      setCode(selectedStub.startSnippet + selectedStub.endSnippet);
-    }
+    if (stub) setCode(stub.startSnippet + stub.endSnippet);
   }, [language, problem]);
 
   const handleSubmission = async () => {
     if (!problem) return;
+    setIsSubmitting(true);
+    setSubmissionData(null);
+
     try {
-      const response = await axios.post(`${submissionUrl}/api/v1/submissions`, {
+      await axios.post(`${submissionUrl}/api/v1/submissions`, {
         code,
         language,
         userId: USER_ID,
         problemId: problem._id,
       });
       toast.success("Submission sent!");
-      return response;
     } catch (error) {
       console.error(error);
       toast.error("Submission failed!");
@@ -83,22 +110,16 @@ function ProblemDescription() {
     setIsDragging(true);
     e.preventDefault();
   };
-  const stopDragging = () => isDragging && setIsDragging(false);
+  const stopDragging = () => setIsDragging(false);
   const onDrag = (e: React.DragEvent<HTMLDivElement>) => {
     if (!isDragging) return;
-    const newLeftWidth = (e.clientX / window.innerWidth) * 100;
-    if (newLeftWidth > 10 && newLeftWidth < 90) setLeftWidth(newLeftWidth);
+    const newLeft = (e.clientX / window.innerWidth) * 100;
+    if (newLeft > 10 && newLeft < 90) setLeftWidth(newLeft);
   };
-
-  const isActiveTab = (tabName: string) =>
-    activeTab === tabName ? "tab tab-active" : "tab";
-  const isInputTabActive = (tabName: string) =>
-    testCaseTab === tabName ? "tab tab-active" : "tab";
 
   if (!problem) return <div className="text-white p-4">Loading problem...</div>;
 
   const sanitizedMarkdown = DOMPurify.sanitize(problem.description || "");
-  const testCases = problem.testCases || [];
 
   return (
     <div
@@ -106,6 +127,8 @@ function ProblemDescription() {
       onMouseMove={onDrag}
       onMouseUp={stopDragging}
     >
+      {/* SOCKET RESULT / CONSOLE */}
+
       {/* LEFT PANEL */}
       <div
         className="leftPanel h-full overflow-auto"
@@ -115,30 +138,75 @@ function ProblemDescription() {
           <a
             onClick={() => setActiveTab("statement")}
             role="tab"
-            className={isActiveTab("statement")}
+            className={`tab ${activeTab === "statement" ? "tab-active" : ""}`}
           >
             Problem Statement
           </a>
           <a
-            onClick={() => setActiveTab("editorial")}
+            onClick={() => {
+              setActiveTab("submissions");
+              fetchSubmissions();
+            }}
             role="tab"
-            className={isActiveTab("editorial")}
-          >
-            Editorial
-          </a>
-          <a
-            onClick={() => setActiveTab("submissions")}
-            role="tab"
-            className={isActiveTab("submissions")}
+            className={`tab ${activeTab === "submissions" ? "tab-active" : ""}`}
           >
             Submissions
           </a>
         </div>
 
-        <div className="markdownViewer p-[20px] basis-1/2">
-          <ReactMarkdown rehypePlugins={[rehypeRaw]} className="prose">
-            {sanitizedMarkdown}
-          </ReactMarkdown>
+        <div className="markdownViewer p-5">
+          {activeTab === "statement" ? (
+            <ReactMarkdown rehypePlugins={[rehypeRaw]} className="prose">
+              {sanitizedMarkdown}
+            </ReactMarkdown>
+          ) : (
+            <div>
+              {isLoadingSubs ? (
+                <p className="text-sm text-gray-400">Loading submissions...</p>
+              ) : submissions.length === 0 ? (
+                <p className="text-gray-400">No submissions found.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="table table-zebra text-sm">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Status</th>
+                        <th>Language</th>
+                        <th>Submitted At</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {submissions.map((sub, idx) => (
+                        <tr key={sub._id}>
+                          <td>{idx + 1}</td>
+                          <td>
+                            <span
+                              className={`font-semibold ${
+                                sub.status === "COMPLETED"
+                                  ? "text-green-500"
+                                  : sub.status === "Pending"
+                                  ? "text-yellow-500"
+                                  : "text-red-500"
+                              }`}
+                            >
+                              {sub.status}
+                            </span>
+                          </td>
+                          <td>{sub.language}</td>
+                          <td>
+                            {new Date(
+                              sub.createdAt || Date.now()
+                            ).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -153,14 +221,14 @@ function ProblemDescription() {
         className="rightPanel h-full overflow-auto flex flex-col"
         style={{ width: `${100 - leftWidth}%` }}
       >
-        {/* Top controls */}
-        <div className="flex gap-x-1.5 justify-start items-center px-4 py-2 basis-[5%]">
+        {/* Top Controls */}
+        <div className="flex gap-x-1.5 justify-start items-center px-4 py-2">
           <button className="btn btn-success btn-sm" onClick={handleSubmission}>
             Submit
           </button>
 
           <select
-            className="select select-info w-full select-sm max-w-xs"
+            className="select select-info select-sm max-w-xs"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
@@ -172,7 +240,7 @@ function ProblemDescription() {
           </select>
 
           <select
-            className="select select-info w-full select-sm max-w-xs"
+            className="select select-info select-sm max-w-xs"
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
           >
@@ -184,14 +252,13 @@ function ProblemDescription() {
           </select>
         </div>
 
-        {/* Code editor */}
-        <div className="flex flex-col editor-console grow-[1]">
+        {/* Code Editor */}
+        <div className=" flex flex-col h-[80vh]">
           <Editor
-            height="100%"
             defaultLanguage={language}
             language={language}
             value={code}
-            onChange={(value) => setCode(value || "")}
+            onChange={(v) => setCode(v || "")}
             theme={theme}
             options={{
               automaticLayout: true,
@@ -199,56 +266,52 @@ function ProblemDescription() {
               minimap: { enabled: false },
             }}
           />
+        </div>
+        {/* code status  */}
 
-          {/* Test cases */}
-          <div className="collapse bg-base-200 rounded-none mt-2">
-            <input type="checkbox" className="peer" />
-            <div className="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
-              Console
-            </div>
-            <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
-              <div role="tablist" className="tabs tabs-boxed w-3/5 mb-4">
-                <a
-                  onClick={() => setTestCaseTab("input")}
-                  role="tab"
-                  className={isInputTabActive("input")}
-                >
-                  Input
-                </a>
-                <a
-                  onClick={() => setTestCaseTab("output")}
-                  role="tab"
-                  className={isInputTabActive("output")}
-                >
-                  Output
-                </a>
-              </div>
-
-              {testCaseTab === "input" ? (
-                <div className="space-y-2">
-                  {testCases.map((t) => (
-                    <div
-                      key={t._id}
-                      className="bg-neutral text-white rounded-md p-2"
-                    >
-                      <strong>Input:</strong> {t.input}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {testCases.map((t) => (
-                    <div
-                      key={t._id}
-                      className="bg-neutral text-white rounded-md p-2"
-                    >
-                      <strong>Expected Output:</strong> {t.output}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+        <div className="bg-gradient-to-r from-orange-800 to-orange-600 text-white mt-3 rounded-lg p-4 shadow-lg">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-semibold text-lg flex items-center gap-2">
+              🖥️ Console
+            </h3>
           </div>
+
+          {/* Loader while waiting */}
+          {isSubmitting && !submissionData && (
+            <div className="flex flex-col items-center justify-center py-4">
+              <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin mb-3"></div>
+              <p className="text-sm opacity-80">Evaluating your code...</p>
+            </div>
+          )}
+
+          {/* Show socket response */}
+          {!isSubmitting && submissionData && (
+            <div className="animate-fadeIn">
+              <p>
+                <strong>Status:</strong>{" "}
+                <span
+                  className={
+                    submissionData.status === "COMPLETED"
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }
+                >
+                  {submissionData.status}
+                </span>
+              </p>
+              <p className="mt-1">
+                <strong>Output:</strong>{" "}
+                <span className="text-yellow-200">
+                  {submissionData.output || "N/A"}
+                </span>
+              </p>
+            </div>
+          )}
+
+          {/* Idle state */}
+          {!isSubmitting && !submissionData && (
+            <p className="opacity-60 text-sm">No submissions yet</p>
+          )}
         </div>
       </div>
     </div>

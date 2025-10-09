@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
-export function useSocket(url: string, userId: string) {
+export function useSocket(url: string, userId: string, setIsSubmitting: any) {
   const socketRef = useRef<Socket | null>(null);
   const [connectionId, setConnectionId] = useState<string>("");
-  const [submissionData, setSubmissionData] = useState<any>({
-    status: "fsad",
-  });
-  console.log("socike", url);
+  const [submissionData, setSubmissionData] = useState<any>(null);
+
   useEffect(() => {
     const socket = io(url);
     socketRef.current = socket;
@@ -23,13 +21,30 @@ export function useSocket(url: string, userId: string) {
     });
 
     socket.on("connectionId", (data: string) => {
-      console.log("Connection Id received:", data);
       setConnectionId(data);
     });
 
     socket.on("submissionPayloadResponse", (data: any) => {
-      console.log("Submission payload received:", data);
-      setSubmissionData(data);
+      try {
+        // Validate structure before updating state
+        console.log("debug_9", data?.response?.status, data?.userId, userId);
+        if (
+          data?.response?.status &&
+          data?.response?.output &&
+          data?.userId === userId
+        ) {
+          setIsSubmitting(false);
+          setSubmissionData({
+            status: data.response.status,
+            output: data.response.output,
+            submissionId: data.submissionId,
+          });
+        } else {
+          console.warn("⚠️ Invalid or unrelated socket data:", data);
+        }
+      } catch (err) {
+        console.error("Error parsing socket data:", err);
+      }
     });
 
     return () => {
@@ -37,5 +52,5 @@ export function useSocket(url: string, userId: string) {
     };
   }, [url, userId]);
 
-  return { socketRef, connectionId, submissionData };
+  return { socketRef, connectionId, submissionData  , setSubmissionData};
 }
