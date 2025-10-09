@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { useState, DragEvent, useEffect } from "react";
 import AceEditor from "react-ace";
 import axios from "axios";
@@ -5,102 +6,109 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import "../../imports/AceBuildImports";
 import DOMPurify from "dompurify";
-import { problemData } from "./problemData.js";
 import Languages from "../../constants/Languages";
 import Themes from "../../constants/Themes";
+
+import "./AceBuildImports";
+
 import { useSocket } from "../../hooks/useSocket";
+import { ProblemData } from "../../types/problem.types";
 import toast from "react-hot-toast";
 
-type languageSupport = {
-  languageName: string;
-  value: string;
-};
-
-type themeStyle = {
-  themeName: string;
-  value: string;
-};
+// type languageSupport = { languageName: string; value: string };
+// type themeStyle = { themeName: string; value: string };
 
 const USER_ID = "GOURAV_1";
-const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
-const socketUrl = import.meta.env.VITE_SOCKET_SERVICE;
+// const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
+// const socketUrl = import.meta.env.VITE_SOCKET_SERVICE;
 
-function Description({ descriptionText }: { descriptionText: string }) {
-  const sanitizedMarkdown = DOMPurify.sanitize(descriptionText);
-  const { submissionData } = useSocket(socketUrl, USER_ID);
-  useEffect(() => {
-    toast.success("dfssa");
-    // if (submissionData) {
-    //   toast.success(`Submission Status: ${submissionData.status}`, {
-    //     duration: 4000,
-    //   });
-    // }
-  }, [submissionData]);
-  const [activeTab, setActiveTab] = useState("statement");
-  const [testCaseTab, setTestCaseTab] = useState("input");
-  const [leftWidth, setLeftWidth] = useState(50);
-  const [isDragging, setIsDragging] = useState(false);
-  const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState("");
-  const [theme, setTheme] = useState("monokai");
+function ProblemDescription() {
+  // const { id } = useParams<{ id: string }>();
+  // const [problem, setProblem] = useState<ProblemData | null>(null);
+  // const [activeTab, setActiveTab] = useState("statement");
+  // const [testCaseTab, setTestCaseTab] = useState("input");
+  // const [leftWidth, setLeftWidth] = useState(50);
+  // const [isDragging, setIsDragging] = useState(false);
+  // const [language, setLanguage] = useState("javascript");
+  // const [code, setCode] = useState("");
+  // const [theme, setTheme] = useState("monokai");
 
-  // 🧠 Fill code editor based on selected language
-  useEffect(() => {
-    const problem = problemData.data;
-    if (!problem || !problem.codeStubs) return;
+  // useSocket(socketUrl, USER_ID);
 
-    const selectedStub = problem.codeStubs.find(
-      (stub: any) => stub.language.toLowerCase() === language.toLowerCase()
-    );
+  // Fetch problem by ID
+  // useEffect(() => {
+  //   toast.success("dfssa");
 
-    if (selectedStub) {
-      setCode(selectedStub.startSnippet + selectedStub.endSnippet);
-    }
-  }, [language]);
+  //   if (!id) return;
 
-  async function handleSubmission() {
-    try {
-      const response = await axios.post(`${submissionUrl}/api/v1/submissions`, {
-        code,
-        language,
-        userId: USER_ID,
-        problemId: problemData.data._id,
-      });
-      console.log(response);
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //   const fetchProblem = async () => {
+  //     try {
+  //       const res = await fetch(
+  //         `${import.meta.env.VITE_PROBLEM_SERVICE}/problems/${id}`
+  //       );
+  //       const data = await res.json();
+  //       if (data.success) setProblem(data.data);
+  //     } catch (err) {
+  //       console.error("Error fetching problem:", err);
+  //     }
+  //   };
 
-  const startDragging = (e: DragEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    e.preventDefault();
-  };
+  //   fetchProblem();
+  // }, [id]);
 
-  const stopDragging = () => {
-    if (isDragging) setIsDragging(false);
-  };
+  // Fill code editor based on selected language
+  // useEffect(() => {
+  //   if (!problem || !problem.codeStubs) return;
 
-  const onDrag = (e: DragEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    const newLeftWidth = (e.clientX / window.innerWidth) * 100;
-    if (newLeftWidth > 10 && newLeftWidth < 90) {
-      setLeftWidth(newLeftWidth);
-    }
-  };
+  //   const selectedStub = problem.codeStubs.find(
+  //     (stub: any) => stub.language.toLowerCase() === language.toLowerCase()
+  //   );
 
-  const isActiveTab = (tabName: string) =>
-    activeTab === tabName ? "tab tab-active" : "tab";
+  //   if (selectedStub) {
+  //     setCode(selectedStub.startSnippet + selectedStub.endSnippet);
+  //   }
+  // }, [language, problem]);
 
-  const isInputTabActive = (tabName: string) =>
-    testCaseTab === tabName ? "tab tab-active" : "tab";
+  // const handleSubmission = async () => {
+  //   if (!problem) return;
+  //   try {
+  //     const response = await axios.post(`${submissionUrl}/api/v1/submissions`, {
+  //       code,
+  //       language,
+  //       userId: USER_ID,
+  //       problemId: problem._id,
+  //     });
+  //     console.log(response);
+  //     return response;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  // 🧩 Get test cases from problem data
-  const testCases = problemData.data.testCases || [];
+  // Drag functions
+  // const startDragging = (e: DragEvent<HTMLDivElement>) => {
+  //   setIsDragging(true);
+  //   e.preventDefault();
+  // };
+  // const stopDragging = () => isDragging && setIsDragging(false);
+  // const onDrag = (e: DragEvent<HTMLDivElement>) => {
+  //   if (!isDragging) return;
+  //   const newLeftWidth = (e.clientX / window.innerWidth) * 100;
+  //   if (newLeftWidth > 10 && newLeftWidth < 90) setLeftWidth(newLeftWidth);
+  // };
+
+  // const isActiveTab = (tabName: string) =>
+  //   activeTab === tabName ? "tab tab-active" : "tab";
+  // const isInputTabActive = (tabName: string) =>
+  //   testCaseTab === tabName ? "tab tab-active" : "tab";
+
+  // if (!problem) return <div className="text-white p-4">Loading problem...</div>;
+
+  // const sanitizedMarkdown = DOMPurify.sanitize(problem.description || "");
+  // const testCases = problem.testCases || [];
 
   return (
-    <></>
+    <div></div>
     // <div
     //   className="flex w-screen h-[calc(100vh-57px)]"
     //   onMouseMove={onDrag}
@@ -146,7 +154,7 @@ function Description({ descriptionText }: { descriptionText: string }) {
     //   <div
     //     className="divider cursor-col-resize w-[5px] bg-slate-200 h-full"
     //     onMouseDown={startDragging}
-    //   ></div>
+    //   />
 
     //   {/* RIGHT PANEL */}
     //   <div
@@ -155,42 +163,33 @@ function Description({ descriptionText }: { descriptionText: string }) {
     //   >
     //     {/* Top controls */}
     //     <div className="flex gap-x-1.5 justify-start items-center px-4 py-2 basis-[5%]">
-    //       <div>
-    //         <button
-    //           className="btn btn-success btn-sm"
-    //           onClick={handleSubmission}
-    //         >
-    //           Submit
-    //         </button>
-    //       </div>
+    //       <button className="btn btn-success btn-sm" onClick={handleSubmission}>
+    //         Submit
+    //       </button>
 
-    //       <div>
-    //         <select
-    //           className="select select-info w-full select-sm max-w-xs"
-    //           value={language}
-    //           onChange={(e) => setLanguage(e.target.value)}
-    //         >
-    //           {Languages.map((lang: languageSupport) => (
-    //             <option key={lang.value} value={lang.value}>
-    //               {lang.languageName}
-    //             </option>
-    //           ))}
-    //         </select>
-    //       </div>
+    //       <select
+    //         className="select select-info w-full select-sm max-w-xs"
+    //         value={language}
+    //         onChange={(e) => setLanguage(e.target.value)}
+    //       >
+    //         {Languages.map((lang: languageSupport) => (
+    //           <option key={lang.value} value={lang.value}>
+    //             {lang.languageName}
+    //           </option>
+    //         ))}
+    //       </select>
 
-    //       <div>
-    //         <select
-    //           className="select select-info w-full select-sm max-w-xs"
-    //           value={theme}
-    //           onChange={(e) => setTheme(e.target.value)}
-    //         >
-    //           {Themes.map((th: themeStyle) => (
-    //             <option key={th.value} value={th.value}>
-    //               {th.themeName}
-    //             </option>
-    //           ))}
-    //         </select>
-    //       </div>
+    //       <select
+    //         className="select select-info w-full select-sm max-w-xs"
+    //         value={theme}
+    //         onChange={(e) => setTheme(e.target.value)}
+    //       >
+    //         {Themes.map((th: themeStyle) => (
+    //           <option key={th.value} value={th.value}>
+    //             {th.themeName}
+    //           </option>
+    //         ))}
+    //       </select>
     //     </div>
 
     //     {/* Code editor */}
@@ -200,7 +199,7 @@ function Description({ descriptionText }: { descriptionText: string }) {
     //           mode={language}
     //           theme={theme}
     //           value={code}
-    //           onChange={(val: string) => setCode(val)}
+    //           onChange={(val) => setCode(val)}
     //           name="codeEditor"
     //           className="editor"
     //           style={{ width: "100%" }}
@@ -214,13 +213,12 @@ function Description({ descriptionText }: { descriptionText: string }) {
     //         />
     //       </div>
 
-    //       {/* Test cases section */}
+    //       {/* Test cases */}
     //       <div className="collapse bg-base-200 rounded-none">
     //         <input type="checkbox" className="peer" />
     //         <div className="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
     //           Console
     //         </div>
-
     //         <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
     //           <div role="tablist" className="tabs tabs-boxed w-3/5 mb-4">
     //             <a
@@ -270,4 +268,4 @@ function Description({ descriptionText }: { descriptionText: string }) {
   );
 }
 
-export default Description;
+export default ProblemDescription;

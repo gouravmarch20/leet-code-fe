@@ -4,7 +4,9 @@ import { io, Socket } from "socket.io-client";
 export function useSocket(url: string, userId: string) {
   const socketRef = useRef<Socket | null>(null);
   const [connectionId, setConnectionId] = useState<string>("");
-  const [submissionData, setSubmissionData] = useState<any>(null);
+  const [submissionData, setSubmissionData] = useState<any>({
+    status: "fsad",
+  });
   console.log("socike", url);
   useEffect(() => {
     const socket = io(url);
