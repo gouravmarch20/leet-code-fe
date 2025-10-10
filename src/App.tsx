@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 import Test from "./Test";
 function App() {
   return (
-    <div className="h-[100vh] overflow-hidden">
+    <div className="h-[100vh]">
       <Toaster position="top-right" />
 
       <Navbar />
