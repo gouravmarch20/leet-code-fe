@@ -36,12 +36,11 @@ function ProblemList() {
 
   return (
     // <h3>dd</h3>
-    <div className="flex justify-center items-start w-screen min-h-screen bg-gray-900 text-white py-10">
+    <div className="flex justify-center items-start w-screen min-h-screen bg-gradient-to-bl from-black via-gray-900  to-blue-900 text-white py-10">
       <div className="topic-list flex flex-col w-[70%] gap-4">
 
-        <h1 className="text-2xl font-bold mb-4 text-center">Problem List</h1>
-
-        <div className="flex flex-row justify-end gap-8 items-center">
+        <div className="flex flex-row gap-8 items-center place-content-between">
+          <h1 className="text-xl font-bold">Problem List</h1>
           <SearchBar onChange={onSearchBarChange} value={searchWord}/>
           <Dropdown label="Select difficulty" options={["easy", "medium", "hard", "none"]} value={filter} onChange={onFilterChange} />
         </div>

@@ -131,14 +131,16 @@ function ProblemDescription() {
 
       {/* LEFT PANEL */}
       <div
-        className="leftPanel h-full overflow-auto"
+        className="leftPanel h-full overflow-auto bg-gradient-to-tl bg-gray-900"
         style={{ width: `${leftWidth}%` }}
       >
-        <div role="tablist" className="tabs tabs-boxed w-3/5">
+        <div role="tablist" className="tabs bg-transparent border-blue-400 border tabs-boxed w-3/5">
           <a
             onClick={() => setActiveTab("statement")}
             role="tab"
-            className={`tab ${activeTab === "statement" ? "tab-active" : ""}`}
+            className={`tab ${activeTab === "statement" ? "bg-blue-500" : ""}
+            transition-colors duration-300
+            `}
           >
             Problem Statement
           </a>
@@ -148,7 +150,9 @@ function ProblemDescription() {
               fetchSubmissions();
             }}
             role="tab"
-            className={`tab ${activeTab === "submissions" ? "tab-active" : ""}`}
+            className={`tab ${activeTab === "submissions" ? "bg-blue-600" : ""}
+            transition-colors duration-300
+            `}
           >
             Submissions
           </a>

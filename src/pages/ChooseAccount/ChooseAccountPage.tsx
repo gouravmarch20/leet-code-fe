@@ -27,7 +27,7 @@ const ChooseAccountPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-      <h1 className="text-4xl mb-10 font-semibold">Who&apos;s watching?</h1>
+      <h1 className="text-4xl mb-10 font-semibold">Who&apos;s coding?</h1>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
         {users.map((user) => (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
+import {Home} from "lucide-react"
 interface ActiveUser {
   _id: string;
   username: string;
@@ -26,13 +27,28 @@ function Navbar() {
   };
 
   return (
-    <div className="navbar bg-base-100 border-b-2 h-[55px]">
+    <div className="navbar bg-gradient-to-r from-gray-900 via-blue-950 to-black h-[55px]">
       {/* Left */}
-      <div className="navbar-start"></div>
+      <div className="navbar-start">
+        <Home
+        onClick={() => navigate('/')}
+        className="cursor-pointer text-blue-500 hover:text-cyan-400 transition-colors duration-200"
+        />
+      </div>
 
       {/* Center */}
       <div className="navbar-center">
-        <a className="btn btn-ghost text-xl">AlgoCode</a>
+        <a
+         className="
+          relative inline-block text-2xl font-extrabold 
+          bg-gradient-to-r from-blue-500 via-cyan-400 to-green-500 
+          bg-[length:200%_200%] bg-clip-text text-transparent 
+          transition-all duration-500 ease-in-out
+          hover:bg-right-bottom hover:brightness-110
+        "
+          >
+        AlgoCode
+        </a>
       </div>
 
       {/* Right */}

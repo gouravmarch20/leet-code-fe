@@ -7,7 +7,7 @@ export default function ProblemListItem({problem}) {
     return (
         <div
             key={problem._id}
-            className="p-5 bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-color duration-150 hover:shadow"
+            className="p-5 bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-color duration-150"
         >
             <div className="flex justify-between items-center mb-2">
                 <h2 className="text-xl font-semibold">{problem.title}</h2>

@@ -9,14 +9,18 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) => {
   return (
-    <div className={`flex flex-col gap-1`}>
+    <div className="flex flex-col gap-1 bg-transparent">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-blue-700 w-max rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-max bg-transparent/50 rounded-lg px-2 py-2 focus:outline-none
+        ring-2 focus:ring-blue-500 transition-all duration-200"
       >
         {options.map((option, index) => (
-          <option key={index} value={option}>
+          <option 
+          className=""
+          key={index} 
+          value={option}>
             {option}
           </option>
         ))}
