@@ -7,7 +7,7 @@ interface DropdownProps {
   onChange: (value: string) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) => {
+const Dropdown: React.FC<DropdownProps> = ({ options, value, onChange }) => {
   return (
     <div className="flex flex-col gap-1 bg-transparent">
       <select
@@ -17,10 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) 
         ring-2 focus:ring-blue-500 transition-all duration-200"
       >
         {options.map((option, index) => (
-          <option 
-          className=""
-          key={index} 
-          value={option}>
+          <option className="" key={index} value={option}>
             {option}
           </option>
         ))}
