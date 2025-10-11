@@ -13,7 +13,7 @@ import { useSocket } from "../../hooks/useSocket";
 import { ProblemData } from "../../types/problem.types";
 import { useUser } from "../../hooks/useUser";
 
-const {user} = useUser();
+const { user } = useUser();
 const USER_ID = user?.username || "GOURAV_1";
 const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
 const socketUrl = import.meta.env.VITE_SOCKET_SERVICE;
@@ -136,7 +136,10 @@ function ProblemDescription() {
         className="leftPanel h-full overflow-auto bg-gradient-to-tl bg-gray-900"
         style={{ width: `${leftWidth}%` }}
       >
-        <div role="tablist" className="tabs bg-transparent border-blue-400 border tabs-boxed w-3/5">
+        <div
+          role="tablist"
+          className="tabs bg-transparent border-blue-400 border tabs-boxed w-3/5"
+        >
           <a
             onClick={() => setActiveTab("statement")}
             role="tab"

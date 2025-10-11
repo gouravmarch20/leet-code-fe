@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetchUsers } from "./userApi";
 import { User } from "./userType";
 
@@ -22,7 +22,7 @@ const ChooseAccountPage = () => {
 
   const handleChooseUser = (user: User) => {
     sessionStorage.setItem("activeUser", JSON.stringify(user));
-    navigate('/') // Redirect after choosing
+    navigate("/"); // Redirect after choosing
   };
 
   return (
@@ -54,7 +54,6 @@ const ChooseAccountPage = () => {
         ))}
       </div>
     </div>
-
   );
 };
 

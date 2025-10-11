@@ -5,29 +5,30 @@ export function useSocket(url: string, userId: string, setIsSubmitting: any) {
   const socketRef = useRef<Socket | null>(null);
   const [connectionId, setConnectionId] = useState<string>("");
   const [submissionData, setSubmissionData] = useState<any>(null);
+  const [socketReady, setSocketReady] = useState(false);
 
   useEffect(() => {
-    const socket = io(url);
+    const socket = io(url, { transports: ["websocket"] });
     socketRef.current = socket;
 
     socket.on("connect", () => {
       console.log("✅ Connected to socket server", socket.id);
       socket.emit("setUserId", userId);
-      socket.emit("getConnectionId", userId);
-    });
 
-    socket.on("disconnect", () => {
-      console.log("⚠️ Disconnected from socket server");
+      // Wait a short delay to ensure Redis mapping updates
+      setTimeout(() => {
+        socket.emit("getConnectionId", userId);
+      }, 300);
     });
 
     socket.on("connectionId", (data: string) => {
+      console.log("🎯 Got connectionId", data);
       setConnectionId(data);
+      setSocketReady(true); // ✅ Mark as ready
     });
 
     socket.on("submissionPayloadResponse", (data: any) => {
       try {
-        // Validate structure before updating state
-        console.log("debug_9", data?.response?.status, data?.userId, userId);
         if (
           data?.response?.status &&
           data?.response?.output &&
@@ -39,12 +40,15 @@ export function useSocket(url: string, userId: string, setIsSubmitting: any) {
             output: data.response.output,
             submissionId: data.submissionId,
           });
-        } else {
-          console.warn("⚠️ Invalid or unrelated socket data:", data);
         }
       } catch (err) {
         console.error("Error parsing socket data:", err);
       }
+    });
+
+    socket.on("disconnect", () => {
+      console.log("⚠️ Disconnected from socket server");
+      setSocketReady(false);
     });
 
     return () => {
@@ -52,5 +56,11 @@ export function useSocket(url: string, userId: string, setIsSubmitting: any) {
     };
   }, [url, userId]);
 
-  return { socketRef, connectionId, submissionData  , setSubmissionData};
+  return {
+    socketRef,
+    connectionId,
+    socketReady,
+    submissionData,
+    setSubmissionData,
+  };
 }
