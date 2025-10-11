@@ -13,8 +13,8 @@ import { useSocket } from "../../hooks/useSocket";
 import { ProblemData } from "../../types/problem.types";
 import { useUser } from "../../hooks/useUser";
 
-const { user } = useUser();
-const USER_ID = user?.username || "GOURAV_1";
+
+
 const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
 const socketUrl = import.meta.env.VITE_SOCKET_SERVICE;
 
@@ -33,7 +33,7 @@ function ProblemDescription() {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [isLoadingSubs, setIsLoadingSubs] = useState(false);
 
-  const {user} = useUser();
+  const { user } = useUser();
   const USER_ID = user?.username || "GOURAV_1";
 
   const fetchSubmissions = async () => {
