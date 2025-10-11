@@ -24,6 +24,7 @@ function ProblemDescription() {
   const [activeTab, setActiveTab] = useState("statement");
   const [leftWidth, setLeftWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
   const [theme, setTheme] = useState("vs-dark");
@@ -31,6 +32,9 @@ function ProblemDescription() {
 
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [isLoadingSubs, setIsLoadingSubs] = useState(false);
+
+  const {user} = useUser();
+  const USER_ID = user?.username || "GOURAV_1";
 
   const fetchSubmissions = async () => {
     if (!problem?._id) return;
@@ -61,6 +65,15 @@ function ProblemDescription() {
     USER_ID,
     setIsSubmitting
   );
+
+  //checking if screen is mobile view
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Fetch problem
   useEffect(() => {
@@ -114,7 +127,7 @@ function ProblemDescription() {
   };
   const stopDragging = () => setIsDragging(false);
   const onDrag = (e: React.DragEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
+    if (!isDragging || isMobile) return;
     const newLeft = (e.clientX / window.innerWidth) * 100;
     if (newLeft > 10 && newLeft < 90) setLeftWidth(newLeft);
   };
@@ -125,7 +138,7 @@ function ProblemDescription() {
 
   return (
     <div
-      className="flex w-screen h-[calc(100vh-57px)]"
+      className=" flex flex-col sm:flex-row w-screen md:h-[calc(100vh-57px)]"
       onMouseMove={onDrag}
       onMouseUp={stopDragging}
     >
@@ -133,13 +146,10 @@ function ProblemDescription() {
 
       {/* LEFT PANEL */}
       <div
-        className="leftPanel h-full overflow-auto bg-gradient-to-tl bg-gray-900"
-        style={{ width: `${leftWidth}%` }}
+        className={`leftPanel h-full overflow-auto bg-gradient-to-tl bg-gray-900`}
+        style={{ width: isMobile ? "100%" : `${leftWidth}%` }}
       >
-        <div
-          role="tablist"
-          className="tabs bg-transparent border-blue-400 border tabs-boxed w-3/5"
-        >
+        <div role="tablist" className="tabs bg-transparent border-blue-400 border tabs-boxed w-3/5">
           <a
             onClick={() => setActiveTab("statement")}
             role="tab"
@@ -191,13 +201,12 @@ function ProblemDescription() {
                           <td>{idx + 1}</td>
                           <td>
                             <span
-                              className={`font-semibold ${
-                                sub.status === "COMPLETED"
-                                  ? "text-green-500"
-                                  : sub.status === "Pending"
+                              className={`font-semibold ${sub.status === "COMPLETED"
+                                ? "text-green-500"
+                                : sub.status === "Pending"
                                   ? "text-yellow-500"
                                   : "text-red-500"
-                              }`}
+                                }`}
                             >
                               {sub.status}
                             </span>
@@ -220,21 +229,20 @@ function ProblemDescription() {
       </div>
 
       {/* DRAG DIVIDER */}
-      <div
-        className="divider cursor-col-resize w-[5px] bg-slate-200 h-full"
-        onMouseDown={startDragging}
-      />
+      {!isMobile && (
+        <div
+          className="divider cursor-col-resize w-[5px] bg-slate-200 h-full hover:bg-blue-500 transition-colors"
+          onMouseDown={startDragging}
+        />
+      )}
 
       {/* RIGHT PANEL */}
       <div
         className="rightPanel h-full overflow-auto flex flex-col"
-        style={{ width: `${100 - leftWidth}%` }}
+        style={{ width: isMobile ? "100%" : `${100 - leftWidth}%` }}
       >
         {/* Top Controls */}
-        <div className="flex gap-x-1.5 justify-start items-center px-4 py-2">
-          <button className="btn btn-success btn-sm" onClick={handleSubmission}>
-            Submit
-          </button>
+        <div className="flex gap-x-2 justify-start items-center px-4 py-2">
 
           <select
             className="select select-info select-sm max-w-xs"
@@ -259,6 +267,12 @@ function ProblemDescription() {
               </option>
             ))}
           </select>
+
+          <button className="outline-2 outline outline-green-500 rounded-full px-2 py-1 transition-all 
+          duration-300 hover:ring hover:ring-green-400 "
+            onClick={handleSubmission}>
+            Submit
+          </button>
         </div>
 
         {/* Code Editor */}

@@ -12,7 +12,7 @@ export default function ProblemListItem({ problem }: ProblemListItemProps) {
       className="p-5 bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-color duration-150"
     >
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold">{problem.title}</h2>
+        <h2 className="text-lg md:text-xl font-semibold">{problem.title}</h2>
         <span
           className={`px-3 py-1 text-sm rounded-full ${
             problem.difficulty === "easy"
@@ -32,6 +32,7 @@ export default function ProblemListItem({ problem }: ProblemListItemProps) {
           __html: problem.description?.replace("\n", "<br/>"),
         }}
       />
+      
 
       <div className="mt-3">
         <button

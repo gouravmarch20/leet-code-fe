@@ -39,10 +39,12 @@ function ProblemList() {
     <div className="flex justify-center items-start w-screen min-h-screen bg-gradient-to-bl from-black via-gray-900  to-blue-900 text-white py-10">
       <div className="topic-list flex flex-col w-[70%] gap-4">
 
-        <div className="flex flex-row gap-8 items-center place-content-between">
-          <h1 className="text-xl font-bold">Problem List</h1>
+        <div className="flex flex-col md:flex-row gap-8 items-center place-content-between">
+          <h1 className="text-lg md:text-xl font-bold">Problem List</h1>
+          <div className="flex flex-row gap-8 items-center">
           <SearchBar onChange={onSearchBarChange} value={searchWord}/>
           <Dropdown label="Select difficulty" options={["easy", "medium", "hard", "none"]} value={filter} onChange={onFilterChange} />
+          </div>
         </div>
 
         {problems.length === 0 ? (
