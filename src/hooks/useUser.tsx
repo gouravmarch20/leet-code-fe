@@ -14,7 +14,7 @@ export function useUser() {
   useEffect(() => {
     const stored = sessionStorage.getItem("activeUser");
     if (stored) setUser(JSON.parse(stored));
-  }, []);
+  }, [sessionStorage.getItem("activeUser")]);
 
   const login = (userData: User) => {
     sessionStorage.setItem("activeUser", JSON.stringify(userData));

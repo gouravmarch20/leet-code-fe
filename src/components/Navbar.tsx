@@ -12,19 +12,14 @@ function Navbar() {
   const [activeUser, setActiveUser] = useState<ActiveUser | null>(null);
   const navigate = useNavigate();
   const { user, logout } = useUser();
-  console.log("dfsad" , user)
+
   // Load user from sessionStorage on mount
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("activeUser");
-    if (storedUser) {
-      setActiveUser(JSON.parse(storedUser));
-    }
-  }, []);
+    console.log(user)
+    setActiveUser(user);
+  }, [user]);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("activeUser");
-    navigate("/choose-account");
-  };
+  
 
   return (
     <div className="navbar bg-gradient-to-r from-gray-900 via-blue-950 to-black h-[55px]">
@@ -66,7 +61,7 @@ function Navbar() {
                 src={
                   activeUser?.imageUrl ||
                   `https://ui-avatars.com/api/?name=${
-                    activeUser?.username || "User"
+                    activeUser?.username 
                   }&background=random`
                 }
               />
