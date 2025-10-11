@@ -242,7 +242,9 @@ function ProblemDescription() {
         style={{ width: isMobile ? "100%" : `${100 - leftWidth}%` }}
       >
         {/* Top Controls */}
-        <div className="flex gap-x-2 justify-start items-center px-4 py-2">
+        <div className="flex gap-x-2 justify-start items-center px-4 py-2
+        bg-gradient-to-r from-blue-500 via-blue-950 to-black bg-[length:200%_200%] animate-gradient-once
+        ">
 
           <select
             className="select select-info select-sm max-w-xs"
