@@ -26,15 +26,17 @@ const ChooseAccountPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-      <h1 className="text-4xl mb-10 font-semibold">Who&apos;s coding?</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-bl from-black via-gray-900 to-blue-900 text-white px-4">
+      <h1 className="text-3xl sm:text-4xl mb-10 font-semibold text-center">
+        Who&apos;s coding?
+      </h1>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full max-w-4xl">
         {users.map((user) => (
           <div
             key={user._id}
             onClick={() => handleChooseUser(user)}
-            className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+            className="flex flex-col items-center cursor-pointer transform hover:scale-105 transition-transform duration-200"
           >
             <img
               src={
@@ -42,13 +44,17 @@ const ChooseAccountPage = () => {
                 `https://ui-avatars.com/api/?name=${user.username}&background=random`
               }
               alt={user.username}
-              className="w-24 h-24 rounded-md mb-2 border-2 border-gray-500 hover:border-white"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg mb-2 border-2 border-gray-500 
+                     hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300"
             />
-            <p className="text-lg">{user.username}</p>
+            <p className="text-sm sm:text-base md:text-lg font-medium">
+              {user.username}
+            </p>
           </div>
         ))}
       </div>
     </div>
+
   );
 };
 

@@ -11,8 +11,10 @@ import Languages from "../../constants/Languages";
 import Themes from "../../constants/Themes";
 import { useSocket } from "../../hooks/useSocket";
 import { ProblemData } from "../../types/problem.types";
+import { useUser } from "../../hooks/useUser";
 
-const USER_ID = "GOURAV_1";
+const {user} = useUser();
+const USER_ID = user?.username || "GOURAV_1";
 const submissionUrl = import.meta.env.VITE_SUBMISSION_SERVICE;
 const socketUrl = import.meta.env.VITE_SOCKET_SERVICE;
 
