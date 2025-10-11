@@ -10,12 +10,13 @@ export default function Router() {
   return (
     <Routes >
 
-        <Route path="/" element = {<ProtectedRoute redirectTo="/choose-account" isAllowed={sessionStorage.getItem("activeUser")!=null}/>}>
+      <Route path="/choose-account" element = {<ChooseAccountPage/>}/>
+        <Route element = {
+          <ProtectedRoute redirectTo="/choose-account" />}>
           <Route path="/" element={<ProblemList />} />
           <Route path="/problem/:id" element={<ProblemPage />} />
         </Route>
         <Route path="/test" element = {<Test/>}/>
-        <Route path="/choose-account" element = {<ChooseAccountPage/>}/>
       </Routes>
   )
 }

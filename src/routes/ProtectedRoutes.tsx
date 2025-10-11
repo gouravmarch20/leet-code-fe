@@ -1,19 +1,19 @@
 import { Navigate, Outlet } from "react-router-dom";
 
+
 interface ProtectedRouteProps {
-  isAllowed: boolean;
-  redirectTo?: string;
+    redirectTo: string;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  isAllowed,
-  redirectTo = "/login",
+    redirectTo,
 }) => {
-  if (!isAllowed) {
-    return <Navigate to={redirectTo} replace />;
-  }
+    if (sessionStorage.getItem("activeUser") == null) {
+        console.log("returned")
+        return <Navigate to={redirectTo} replace />;
+    }
 
-  return <Outlet />; // renders the nested route content
+    return <Outlet />; // renders the nested route content
 };
 
 export default ProtectedRoute;
