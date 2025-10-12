@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -13,7 +13,6 @@ import { useSocket } from "../../hooks/useSocket";
 import { ProblemData } from "../../types/problem.types";
 import { useUser } from "../../hooks/useUser";
 
-import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Animator from "../../animation/Animator";
 import { Computer } from "lucide-react";
 import Spinningthing from "../../components/SpinningThing";
