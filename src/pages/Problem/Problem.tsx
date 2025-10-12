@@ -218,7 +218,7 @@ function ProblemDescription() {
                           <td>{idx + 1}</td>
                           <td>
                             <span
-                              className={`font-semibold ${sub.status === "COMPLETED"
+                              className={`font-semibold ${sub.status === "SUCCESS"
                                 ? "text-green-500"
                                 : sub.status === "Pending"
                                   ? "text-yellow-500"
