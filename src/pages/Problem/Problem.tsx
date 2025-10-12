@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -12,6 +12,9 @@ import Themes from "../../constants/Themes";
 import { useSocket } from "../../hooks/useSocket";
 import { ProblemData } from "../../types/problem.types";
 import { useUser } from "../../hooks/useUser";
+
+import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
+import Animator from "../../animation/Animator";
 
 
 
@@ -29,6 +32,8 @@ function ProblemDescription() {
   const [code, setCode] = useState("");
   const [theme, setTheme] = useState("vs-dark");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [showAnimation, setshowAnimation] = useState<boolean>(false);
 
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [isLoadingSubs, setIsLoadingSubs] = useState(false);
@@ -74,6 +79,13 @@ function ProblemDescription() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  //Checking for change in submisstion status
+  useEffect(() => {
+    if(submissionData?.status==="COMPLETED" || submissionData?.status === "FAILED_TEST"){
+      setshowAnimation(true);
+    }
+  }, [submissionData?.status]);
 
   // Fetch problem
   useEffect(() => {
@@ -138,7 +150,7 @@ function ProblemDescription() {
 
   return (
     <div
-      className=" flex flex-col sm:flex-row w-screen md:h-[calc(100vh-57px)]"
+      className="relative flex flex-col sm:flex-row w-screen md:h-[calc(100vh-57px)]"
       onMouseMove={onDrag}
       onMouseUp={stopDragging}
     >
@@ -238,9 +250,16 @@ function ProblemDescription() {
 
       {/* RIGHT PANEL */}
       <div
-        className="rightPanel h-full overflow-auto flex flex-col"
+        className="rightPanel relative h-full overflow-auto flex flex-col"
         style={{ width: isMobile ? "100%" : `${100 - leftWidth}%` }}
       >
+        {/*success fail animation for submission*/}
+        {
+          showAnimation?<Animator type={submissionData.status==="COMPLETED"?"success":"fail"}
+          setshowAnimation={setshowAnimation}
+          />:null
+        }
+        
         {/* Top Controls */}
         <div className="flex gap-x-2 justify-start items-center px-4 py-2
         bg-gradient-to-r from-blue-500 via-blue-950 to-black bg-[length:200%_200%] animate-gradient-once

@@ -32,7 +32,6 @@ export default function ProblemListItem({ problem }: ProblemListItemProps) {
           __html: problem.description?.replace("\n", "<br/>"),
         }}
       />
-      
 
       <div className="mt-3">
         <button
