@@ -15,6 +15,7 @@ import { useUser } from "../../hooks/useUser";
 
 import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Animator from "../../animation/Animator";
+import { Computer } from "lucide-react";
 
 
 
@@ -141,7 +142,7 @@ function ProblemDescription() {
   const onDrag = (e: React.DragEvent<HTMLDivElement>) => {
     if (!isDragging || isMobile) return;
     const newLeft = (e.clientX / window.innerWidth) * 100;
-    if (newLeft > 10 && newLeft < 90) setLeftWidth(newLeft);
+    if (newLeft > 20 && newLeft < 80) setLeftWidth(newLeft);
   };
 
   if (!problem) return <div className="text-white p-4">Loading problem...</div>;
@@ -150,7 +151,7 @@ function ProblemDescription() {
 
   return (
     <div
-      className="relative flex flex-col sm:flex-row w-screen md:h-[calc(100vh-57px)]"
+      className="relative flex flex-col sm:flex-row w-screen md:h-screen md:overflow-clip "
       onMouseMove={onDrag}
       onMouseUp={stopDragging}
     >
@@ -161,7 +162,7 @@ function ProblemDescription() {
         className={`leftPanel h-full overflow-auto bg-gradient-to-tl bg-gray-900`}
         style={{ width: isMobile ? "100%" : `${leftWidth}%` }}
       >
-        <div role="tablist" className="tabs bg-transparent border-blue-400 border tabs-boxed w-3/5">
+        <div role="tablist" className="tabs bg-transparent border-blue-400 border tabs-boxed min-w-max md:w-3/5">
           <a
             onClick={() => setActiveTab("statement")}
             role="tab"
@@ -243,7 +244,7 @@ function ProblemDescription() {
       {/* DRAG DIVIDER */}
       {!isMobile && (
         <div
-          className="divider cursor-col-resize w-[5px] bg-slate-200 h-full hover:bg-blue-500 transition-colors"
+          className="divider cursor-col-resize m-0 w-[5px] bg-slate-200 h-full hover:bg-blue-500 transition-colors"
           onMouseDown={startDragging}
         />
       )}
@@ -261,7 +262,7 @@ function ProblemDescription() {
         }
         
         {/* Top Controls */}
-        <div className="flex gap-x-2 justify-start items-center px-4 py-2
+        <div className="flex gap-x-2 border-b-2 justify-start items-center px-4 py-2
         bg-gradient-to-r from-blue-500 via-blue-950 to-black bg-[length:200%_200%] animate-gradient-once
         ">
 
@@ -313,10 +314,10 @@ function ProblemDescription() {
         </div>
         {/* code status  */}
 
-        <div className="bg-gradient-to-r from-orange-800 to-orange-600 text-white mt-3 rounded-lg p-4 shadow-lg">
+        <div className="border-t-2 bg-gradient-to-l from-blue-900 h-[20vh] via-blue-950 to-gray-900 text-white p-4 shadow-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg flex items-center gap-2">
-              🖥️ Console
+            <Computer /> Console
             </h3>
           </div>
 
