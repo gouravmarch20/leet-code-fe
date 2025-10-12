@@ -86,6 +86,7 @@ function ProblemDescription() {
   useEffect(() => {
     if(submissionData?.status==="SUCCESS" || submissionData?.status === "FAILED_TEST"){
       setshowAnimation(true);
+      fetchSubmissions();
     }
   }, [submissionData?.status]);
 
