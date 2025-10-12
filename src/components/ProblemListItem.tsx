@@ -9,7 +9,9 @@ export default function ProblemListItem({ problem }: ProblemListItemProps) {
   return (
     <div
       key={problem._id}
-      className="p-5 bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-color duration-150"
+      className="p-5 rounded-2xl bg-white/10 shadow-blue-500 shadow-sm hover:shadow-md
+      hover:shadow-blue-500/70
+      transition-color duration-150"
     >
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg md:text-xl font-semibold">{problem.title}</h2>
@@ -35,7 +37,7 @@ export default function ProblemListItem({ problem }: ProblemListItemProps) {
 
       <div className="mt-3">
         <button
-          className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-500 transition"
+          className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-500 transition-colors duration-200"
           onClick={() => navigate(`/problem/${problem._id}`)} // ✅ redirect
         >
           Solve →
