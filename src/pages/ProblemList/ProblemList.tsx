@@ -3,6 +3,8 @@ import { ProblemData } from "../../types/problem.types";
 import ProblemListItem from "../../components/ProblemListItem";
 import Dropdown from "../../components/Dropdown";
 import SearchBar from "../../components/SearchBar";
+import Spinningthing from "../../components/SpinningThing";
+
 
 function ProblemList() {
   const [problems, setProblems] = useState<ProblemData[]>([]);
@@ -38,7 +40,7 @@ function ProblemList() {
     // <h3>dd</h3>
     <div className="flex justify-center items-start w-screen min-h-screen bg-gradient-to-bl from-black via-gray-900  to-blue-900 text-white py-10">
       <div className="topic-list flex flex-col w-[70%] gap-4">
-
+      
         <div className="flex flex-col md:flex-row gap-8 items-center place-content-between">
           <h1 className="text-lg md:text-xl font-bold">Problem List</h1>
           <div className="flex flex-row gap-8 items-center">
@@ -48,7 +50,9 @@ function ProblemList() {
         </div>
 
         {problems.length === 0 ? (
-          <div className="text-center text-gray-400">Loading problems...</div>
+          <div className="text-center">
+            <Spinningthing/>
+          </div>
         ) : (
           problems
             .filter((problem) => filter === "none" || problem.difficulty === filter)

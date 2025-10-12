@@ -9,8 +9,8 @@ export default function ProblemListItem({ problem }: ProblemListItemProps) {
   return (
     <div
       key={problem._id}
-      className="p-5 rounded-2xl bg-white/10 shadow-blue-500 shadow-sm hover:shadow-md
-      hover:shadow-blue-500/70
+      className="p-5 rounded-2xl bg-white/10 shadow-blue-900 shadow-sm hover:shadow-md
+      hover:shadow-blue-900
       transition-color duration-150"
     >
       <div className="flex justify-between items-center mb-2">

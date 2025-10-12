@@ -16,6 +16,7 @@ import { useUser } from "../../hooks/useUser";
 import { DotLottie, DotLottieReact } from "@lottiefiles/dotlottie-react";
 import Animator from "../../animation/Animator";
 import { Computer } from "lucide-react";
+import Spinningthing from "../../components/SpinningThing";
 
 
 
@@ -83,7 +84,7 @@ function ProblemDescription() {
 
   //Checking for change in submisstion status
   useEffect(() => {
-    if(submissionData?.status==="COMPLETED" || submissionData?.status === "FAILED_TEST"){
+    if(submissionData?.status==="SUCCESS" || submissionData?.status === "FAILED_TEST"){
       setshowAnimation(true);
     }
   }, [submissionData?.status]);
@@ -145,7 +146,7 @@ function ProblemDescription() {
     if (newLeft > 20 && newLeft < 80) setLeftWidth(newLeft);
   };
 
-  if (!problem) return <div className="text-white p-4">Loading problem...</div>;
+  if (!problem) return <div className="text-white p-4"><Spinningthing/></div>;
 
   const sanitizedMarkdown = DOMPurify.sanitize(problem.description || "");
 
@@ -194,7 +195,9 @@ function ProblemDescription() {
           ) : (
             <div>
               {isLoadingSubs ? (
-                <p className="text-sm text-gray-400">Loading submissions...</p>
+                <p className="text-sm text-gray-400">
+                  <Spinningthing/>
+                  Loading submissions...</p>
               ) : submissions.length === 0 ? (
                 <p className="text-gray-400">No submissions found.</p>
               ) : (
@@ -256,7 +259,7 @@ function ProblemDescription() {
       >
         {/*success fail animation for submission*/}
         {
-          showAnimation?<Animator type={submissionData.status==="COMPLETED"?"success":"fail"}
+          showAnimation?<Animator type={submissionData.status==="SUCCESS"?"success":"fail"}
           setshowAnimation={setshowAnimation}
           />:null
         }
