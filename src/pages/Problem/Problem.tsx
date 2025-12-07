@@ -83,11 +83,11 @@ function ProblemDescription() {
 
   //Checking for change in submisstion status
   useEffect(() => {
-    if(submissionData?.status==="SUCCESS" || submissionData?.status === "FAILED_TEST"){
+    if (submissionData?.status === "SUCCESS" || submissionData?.status === "FAILED_TEST") {
       setshowAnimation(true);
       fetchSubmissions();
     }
-  }, [submissionData?.status]);
+  }, [isSubmitting]);
 
   // Fetch problem
   useEffect(() => {
@@ -146,7 +146,7 @@ function ProblemDescription() {
     if (newLeft > 20 && newLeft < 80) setLeftWidth(newLeft);
   };
 
-  if (!problem) return <div className="text-white p-4"><Spinningthing/></div>;
+  if (!problem) return <div className="text-white p-4"><Spinningthing /></div>;
 
   const sanitizedMarkdown = DOMPurify.sanitize(problem.description || "");
 
@@ -196,7 +196,7 @@ function ProblemDescription() {
             <div>
               {isLoadingSubs ? (
                 <p className="text-sm text-gray-400">
-                  <Spinningthing/>
+                  <Spinningthing />
                   Loading submissions...</p>
               ) : submissions.length === 0 ? (
                 <p className="text-gray-400">No submissions found.</p>
@@ -259,11 +259,11 @@ function ProblemDescription() {
       >
         {/*success fail animation for submission*/}
         {
-          showAnimation?<Animator type={submissionData.status==="SUCCESS"?"success":"fail"}
-          setshowAnimation={setshowAnimation}
-          />:null
+          showAnimation ? <Animator type={submissionData?.status === "SUCCESS" ? "success" : "fail"}
+            setshowAnimation={setshowAnimation}
+          /> : null
         }
-        
+
         {/* Top Controls */}
         <div className="flex gap-x-2 border-b-2 justify-start items-center px-4 py-2
         bg-gradient-to-r from-blue-500 via-blue-950 to-black bg-[length:200%_200%] animate-gradient-once
@@ -320,7 +320,7 @@ function ProblemDescription() {
         <div className="border-t-2 bg-gradient-to-l from-blue-900 h-[20vh] via-blue-950 to-gray-900 text-white p-4 shadow-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg flex items-center gap-2">
-            <Computer /> Console
+              <Computer /> Console
             </h3>
           </div>
 
@@ -339,18 +339,18 @@ function ProblemDescription() {
                 <strong>Status:</strong>{" "}
                 <span
                   className={
-                    submissionData.status === "COMPLETED"
+                    submissionData?.status === "COMPLETED"
                       ? "text-green-400"
                       : "text-red-400"
                   }
                 >
-                  {submissionData.status}
+                  {submissionData?.status}
                 </span>
               </p>
               <p className="mt-1">
                 <strong>Output:</strong>{" "}
                 <span className="text-yellow-200">
-                  {submissionData.output || "N/A"}
+                  {submissionData?.output || "N/A"}
                 </span>
               </p>
             </div>
