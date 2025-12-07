@@ -1,2 +1,4 @@
-VITE_SUBMISSION_SERVICE=http://localhost:8002
+VITE_SUBMISSION_SERVICE=http://localhost:8002/api/v1
+
 VITE_SOCKET_SERVICE=http://localhost:8003
+VITE_PROBLEM_SERVICE=http://localhost:8000/api/v1

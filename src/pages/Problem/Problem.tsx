@@ -47,7 +47,7 @@ function ProblemDescription() {
     setIsLoadingSubs(true);
     try {
       const res = await axios.post(
-        `${submissionUrl}/api/v1/submissions/problem`,
+        `${submissionUrl}/submissions/problem`,
         {
           userId: USER_ID,
           problemId: problem._id,
@@ -121,7 +121,7 @@ function ProblemDescription() {
     setSubmissionData(null);
 
     try {
-      await axios.post(`${submissionUrl}/api/v1/submissions`, {
+      await axios.post(`${submissionUrl}/submissions`, {
         code,
         language,
         userId: USER_ID,
